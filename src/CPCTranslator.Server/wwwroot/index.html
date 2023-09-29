@@ -5,7 +5,11 @@
       var socket;
       document.addEventListener("DOMContentLoaded", (event) => {
         var list = document.getElementById("list-content");
-        socket = new WebSocket("ws://localhost:5096/translation");
+        var protocol = window.location.protocol === "http" ? "ws" : "wss";
+
+        socket = new WebSocket(
+          protocol + "://" + window.location.host + "/translation"
+        );
 
         socket.onmessage = function (msg) {
           list.innerHTML += "<li>" + msg.data + "</li>";
