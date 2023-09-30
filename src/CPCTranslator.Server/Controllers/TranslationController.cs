@@ -2,6 +2,7 @@ using System.Net.WebSockets;
 using System.Text;
 using CPCTranslator.Server.Models;
 using CPCTranslator.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CPCTranslator.Server.Controllers
@@ -29,6 +30,7 @@ namespace CPCTranslator.Server.Controllers
             }
         }
 
+        [Authorize(Roles = "Translation.Publish")]
         [HttpPost("/translation")]
         public async Task<IActionResult> Post([FromBody] TranslationDto model)
         {
