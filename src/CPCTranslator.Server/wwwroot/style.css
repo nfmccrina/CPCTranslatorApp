@@ -1,6 +1,7 @@
 body {
   margin: 0;
   height: 100%;
+  background-color: silver;
 }
 
 #root {
@@ -16,8 +17,29 @@ body {
   display: flex;
   flex-flow: row;
   flex-shrink: 0;
-  background-color: darkslategray;
+  background-color: teal;
   color: white;
+}
+
+#welcome_message {
+  flex-grow: 2;
+}
+
+#connect_buttons {
+  display: flex;
+  flex-flow: row;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5%;
+}
+
+#connect_buttons button:first-child {
+  margin-left: auto;
+}
+
+#connect_buttons button:last-child {
+  margin-left: auto;
 }
 
 #content {

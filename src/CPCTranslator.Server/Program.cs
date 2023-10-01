@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IMessagingService, MessagingService>();
+builder.Services.AddHostedService<BackgroundSocketProcessor>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o => {
@@ -14,7 +14,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-app.UseWebSockets();
+app.UseWebSockets(new WebSocketOptions()
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(5)
+});
 app.MapControllers();
 app.UseDefaultFiles();
 app.UseStaticFiles();

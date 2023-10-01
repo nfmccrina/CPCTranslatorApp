@@ -7,24 +7,71 @@
     <link rel="stylesheet" href="/style.css" />
     <script>
       var socket;
-      document.addEventListener("DOMContentLoaded", (event) => {
+      var heartbeatRef;
+
+      function ontranslationmessage(msg) {
         var list = document.getElementById("content");
-        var protocol = window.location.protocol === "http" ? "ws" : "wss";
+        list.innerHTML += "<p>" + msg.data + "</p>";
+        list.lastChild.scrollIntoView();
+      }
+
+      function connect() {
+        var protocol = window.location.protocol === "http:" ? "ws" : "wss";
+        var connectButton = document.getElementById("connect_button");
+        var disconnectButton = document.getElementById("disconnect_button");
 
         socket = new WebSocket(
           protocol + "://" + window.location.host + "/translation"
         );
 
-        socket.onmessage = function (msg) {
-          list.innerHTML += "<p>" + msg.data + "</p>";
+        socket.onmessage = ontranslationmessage;
+
+        socket.onclose = (ev) => {
+          connectButton.removeAttribute("disabled");
+          disconnectButton.setAttribute("disabled", "");
         };
+
+        connectButton.setAttribute("disabled", "");
+        disconnectButton.removeAttribute("disabled");
+
+        heartbeatRef = setInterval(() => {
+          if (socket) {
+            socket.send("ping");
+          }
+        }, 30000);
+      }
+
+      function disconnect() {
+        if (heartbeatRef) {
+          clearInterval(heartbeatRef);
+        }
+
+        if (socket) {
+          socket.close();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        var connectButton = document.getElementById("connect_button");
+        var disconnectButton = document.getElementById("disconnect_button");
+
+        connectButton.removeAttribute("disabled");
+        disconnectButton.setAttribute("disabled", "");
       });
     </script>
   </head>
   <body>
     <div id="root">
       <div id="banner">
-        <p>Приві́т!</p>
+        <div id="welcome_message">
+          <p>Welcome to Christ Presbyterian Church, Cool Springs</p>
+        </div>
+        <div id="connect_buttons">
+          <button id="connect_button" onclick="connect()">Connect</button>
+          <button id="disconnect_button" onclick="disconnect()">
+            Disconnect
+          </button>
+        </div>
       </div>
       <div id="content"></div>
     </div>
